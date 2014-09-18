@@ -1,11 +1,6 @@
+
 node[:deploy].each do |application, deploy|
-  Dir[ "#{deploy[:deploy_to]}/shared/log/*" ].each do |path|
-  file path do
-    owner "www-data"
-    group "www-data"
-  end if File.file?(path)
-  directory path do
-    owner "www-data"
-    group "www-data"
-  end if File.directory?(path)
+  execute "chmod 777 #{deploy[:deploy_to]}/shared/log/*" 
+    not_if "test -f #{deploy[:deploy_to]}/shared/log/"
+  end
 end
