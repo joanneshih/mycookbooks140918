@@ -1,6 +1,13 @@
+node[:deploy].each do |app_name, deploy|
+    Chef::Log.debug("Node: #{deploy[:deploy_to]}")
+    permissions_command = "sudo chmod -Rf 777 shared/log/"
 
-node[:deploy].each do |application, deploy|
-  execute "chmod 777 #{deploy[:deploy_to]}/shared/log/*.log" 
-    not_if "test -f #{deploy[:deploy_to]}/shared/log/"
-  end
+    bash "change_permissions" do
+        Chef::Log.debug("Setting permissions on #{deploy[:deploy_to]}/shared/log/")
+        cwd "#{deploy[:deploy_to]}/shared"
+        code <<-EOH
+            #{permissions_command}
+        EOH
+    end
 end
+
